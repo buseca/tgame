@@ -45,15 +45,15 @@ planet.on('click', function () {
 	// se non ho navi da muovere le raccolgo
 	if( !navToMove ) {
 		
-		navToMove = parseInt($(this).find('span').text());
-		$(this).find('span').text('00');
+		navToMove = parseInt($(this).find('span').text()) - 1;
+		$(this).find('span').text('1');
 		console.log(navToMove);
 		
 		if ($(this).hasClass('den')) {
-			denNav = '00';
+			denNav = '1';
 			classToMove = 'den-child';
 		} else if ($(this).hasClass('rugge')) {
-			ruggeNav = '00';
+			ruggeNav = '1';
 			classToMove = 'rugge-child';
 		}
 	// se ho navi da muovere le setto sul nuovo pianeta
@@ -62,43 +62,44 @@ planet.on('click', function () {
 		
 		var oldNav = parseInt($(this).find('span').text());
 
-		if ($(this).hasClass('den-child') && classToMove === 'den-child') {
-			navToMove = navToMove + oldNav;
-		} else {
-			var diff = navToMove - oldNav;
-			if (diff > 0) {
-				navToMove = Math.abs(diff);
-				$(this).addClass('den-child');
-				$(this).removeClass('rugge-child');
-			} else if (diff < 0) {
-				navToMove = Math.abs(diff);
-				$(this).addClass('rugge-child');
-				$(this).removeClass('den-child');
-			} else {
-				navToMove = '00';
-				$(this).removeClass('den-child rugge-child');
-			}
-		}
-
-		if ($(this).hasClass('rugge-child') && classToMove === 'rugge-child') {
+		if (classToMove === 'den-child') {
+			if ($(this).hasClass('den-child')) {
 				navToMove = navToMove + oldNav;
-		} else {
-			var diff = navToMove - oldNav;
-			if (diff > 0) {
-				navToMove = Math.abs(diff);
-				$(this).addClass('rugge-child');
-				$(this).removeClass('den-child');
-			} else if (diff < 0) {
-				navToMove = Math.abs(diff);
-				$(this).addClass('den-child');
-				$(this).removeClass('rugge-child');
 			} else {
-				navToMove = '00';
-				$(this).removeClass('rugge-child den-child');
+				var diff = navToMove - oldNav;
+				if (diff > 0) {
+					navToMove = Math.abs(diff);
+					$(this).addClass('den-child');
+					$(this).removeClass('rugge-child');
+				} else if (diff < 0) {
+					navToMove = Math.abs(diff);
+					$(this).addClass('rugge-child');
+					$(this).removeClass('den-child');
+				} else {
+					navToMove = '00';
+					$(this).removeClass('den-child rugge-child');
+				}
 			}
-		}
+		} else {
+			if ($(this).hasClass('rugge-child') ) {
+				navToMove = navToMove + oldNav;
+			} else {
+				var diff = navToMove - oldNav;
+				if (diff > 0) {
+					navToMove = Math.abs(diff);
+					$(this).addClass('rugge-child');
+					$(this).removeClass('den-child');
+				} else if (diff < 0) {
+					navToMove = Math.abs(diff);
+					$(this).addClass('den-child');
+					$(this).removeClass('rugge-child');
+				} else {
+					navToMove = '00';
+					$(this).removeClass('rugge-child den-child');
+				}
+			}
 		
-
+		}
 		if ($(this).hasClass('den')) {
 			denNav = navToMove;
 		} else if ($(this).hasClass('rugge')) {
