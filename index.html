@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- STYLESHEETS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" >
+    <link rel="stylesheet" href="css/tgame.css">
+
+    <title>Firebase Cloud Chat</title>
+
+
+
+  </head>
+
+  <body>
+    
+    <button>1 - press here</button>
+    
+    <span id="chronotime">0:00:00:00</span>
+    <form name="chronoForm">
+        <input type="button" name="startstop" value="start!" onClick="chronoStart()" />
+        <input type="button" name="reset" value="reset!" onClick="chronoReset()" />
+    </form>
+
+    <!-- FIREBASE, JQUERY -->
+    <script src="https://cdn.firebase.com/js/client/2.0.2/firebase.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    
+
+    
+    <!-- CHAT.JS FILE -->
+    <script src="js/tgame.js"></script>
+  </body>
+</html>
