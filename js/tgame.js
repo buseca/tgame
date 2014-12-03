@@ -59,10 +59,46 @@ planet.on('click', function () {
 	// se ho navi da muovere le setto sul nuovo pianeta
 	} else {
 		// se ci sono navi sul pianeta sommo le vecchie alle nuove
-		if ($(this).find('span').text != '00') {
-			var oldNav = parseInt($(this).find('span').text());
-			navToMove = Math.abs(navToMove - oldNav);
+		
+		var oldNav = parseInt($(this).find('span').text());
+
+		if ($(this).hasClass('den-child') && classToMove === 'den-child') {
+			navToMove = navToMove + oldNav;
+		} else {
+			var diff = navToMove - oldNav;
+			if (diff > 0) {
+				navToMove = Math.abs(diff);
+				$(this).addClass('den-child');
+				$(this).removeClass('rugge-child');
+			} else if (diff < 0) {
+				navToMove = Math.abs(diff);
+				$(this).addClass('rugge-child');
+				$(this).removeClass('den-child');
+			} else {
+				navToMove = '00';
+				$(this).removeClass('den-child rugge-child');
+			}
 		}
+
+		if ($(this).hasClass('rugge-child') && classToMove === 'rugge-child') {
+				navToMove = navToMove + oldNav;
+		} else {
+			var diff = navToMove - oldNav;
+			if (diff > 0) {
+				navToMove = Math.abs(diff);
+				$(this).addClass('rugge-child');
+				$(this).removeClass('den-child');
+			} else if (diff < 0) {
+				navToMove = Math.abs(diff);
+				$(this).addClass('den-child');
+				$(this).removeClass('rugge-child');
+			} else {
+				navToMove = '00';
+				$(this).removeClass('rugge-child den-child');
+			}
+		}
+		
+
 		if ($(this).hasClass('den')) {
 			denNav = navToMove;
 		} else if ($(this).hasClass('rugge')) {

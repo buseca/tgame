@@ -32,4 +32,11 @@
 
 	&.den { background-color: purple; }
 	&.rugge { background-color: lightgreen; }
+
+	&.den-child {
+		background-color: lighten(purple, 15%);
+	}
+	&.rugge-child {
+		background-color: lighten(lightgreen, 15%);
+	}
 }
