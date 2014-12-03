@@ -17,7 +17,7 @@ var denNav = den.find('span').text();
 
 
 
-//faccio il mining delle navicelle sui pianeti   base
+//faccio il mining delle navicelle sui pianeti base
 setInterval(function() {
   ++ ruggeNav;
   ++ denNav;
