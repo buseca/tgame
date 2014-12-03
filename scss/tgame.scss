@@ -29,4 +29,7 @@
 	line-height: 90px;
 	font-family: helvetica;
 	display: inline-block;
+
+	&.den { background-color: purple; }
+	&.rugge { background-color: lightgreen; }
 }
