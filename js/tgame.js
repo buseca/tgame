@@ -1,35 +1,34 @@
 $(document).ready(function() {
 
 
+// mappo i pianeti e creo le loro varibili
 
-
-
-  // ----------------------
-  // touchmap________
-  // ----------------------
-// var users = [ 
-// 	{
-// 		name: "den",
-// 		nav
-// 	},
-
-// ]
-
-
-
-
-var rugge = $('.planet.rugge');
-var den = $('.planet.den');
+// tutti i pianeti nelo stage
 var planet = $('.planet');
 
+// i pianeti madre dei giocatori
+var rugge = $('.planet.rugge');
+var den = $('.planet.den');
+
+// pianeti generici
+var uno = $('.planet-1');
+var due = $('.planet-2');
+var tre = $('.planet-3');
+var quattro = $('.planet-4');
+var cinque = $('.planet-5');
+var sei = $('.planet-6');
+var sette = $('.planet-7');
+
+// i cotenitori del numero di navicelle visualizzato nei pianeti madre
+var ruggeVal = rugge.find('span');
+var denVal = den.find('span');
+// il numero vero e proprio
 var ruggeNav = rugge.find('span').text();
 var denNav = den.find('span').text();
 
-var ruggeVal = rugge.find('span');
-var denVal = den.find('span');
 
 
-//faccio il mining delle navicelle sui pianeti base
+//faccio il mining delle navicelle sui pianeti madre
 setInterval(function() {
   ++ ruggeNav;
   ++ denNav;
@@ -112,4 +111,52 @@ planet.on('click', function () {
 
 });
 
+
+
+
+
+
+
+
+
+//  Connessioni a Firebase
+
+// variabili per mandar su i dati
+var tGame = new Firebase('https://tgame.firebaseio.com/');
+var ruggeNavToSend, unoNavToSend, dueNavToSend, treNavToSend, quattroNavToSend, cinqueNavToSend, seiNavToSend, setteNavToSend;
+
+// mando su i dati ad ogni click 
+$("*").click(function () {
+
+// metto in variabili gli attuali valori delle navicelle sui rispettivi pianeti
+  ruggeNavToSend = rugge.find('span').text();
+  denNavToSend = den.find('span').text();
+  unoNavToSend = uno.find('span').text();
+  dueNavToSend = due.find('span').text();
+  treNavToSend = tre.find('span').text();
+  quattroNavToSend = quattro.find('span').text();
+  cinqueNavToSend = cinque.find('span').text();
+  seiNavToSend = sei.find('span').text();
+  setteNavToSend = sette.find('span').text();
+
+// mando su l'oggetto con SET , che sovrascrive quelli vecchi
+  tGame.set( { navicellePianeti: { 
+  		denNav: denNav,
+  		ruggeNav: ruggeNav,
+  		unoNav: unoNavToSend,
+  		dueNav: dueNavToSend,
+  		treNav: treNavToSend,
+  		quattroNav: quattroNavToSend,
+  		cinqueNav: cinqueNavToSend,
+  		seiNav: seiNavToSend,
+  		setteNav: setteNavToSend
+  	}
+
+  });
+
+});
+
+
+
+// fine document ready
 });
