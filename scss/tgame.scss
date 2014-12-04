@@ -30,7 +30,7 @@
 	font-family: helvetica;
 	display: inline-block;
 
-	&.den { background-color: purple; }
+	&.den {background-color: purple;}
 	&.rugge { background-color: lightgreen; }
 
 	&.den-child {
@@ -38,5 +38,9 @@
 	}
 	&.rugge-child {
 		background-color: lighten(lightgreen, 15%);
+	}
+
+	> span {
+		pointer-events: none;
 	}
 }
