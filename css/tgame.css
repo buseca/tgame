@@ -33,20 +33,20 @@
   display: inline-block;
 }
 
-.planet.den {
-  background-color: purple;
-}
-
-.planet.rugge {
-  background-color: lightgreen;
-}
-
 .planet.den-child {
   background-color: #e600e6;
 }
 
 .planet.rugge-child {
   background-color: #e8fce8;
+}
+
+.planet.den {
+  background-color: purple;
+}
+
+.planet.rugge {
+  background-color: lightgreen;
 }
 
 .planet > span {

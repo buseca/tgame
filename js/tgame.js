@@ -43,7 +43,10 @@ var navToMove, classToMove;
 planet.on('click', function () {
 	// se non ho navi da muovere le raccolgo
 	if( !navToMove ) {
-		
+		// se il pianeta su cui clicco è vuoto o ha una solo nava esco senza fare niente 
+		if ($(this).find('span').text() === '00' || $(this).find('span').text() == 1) {
+			return;
+		}
 		navToMove = parseInt($(this).find('span').text()) - 1;
 		$(this).find('span').text('1');
 		console.log(navToMove);
@@ -62,36 +65,38 @@ planet.on('click', function () {
 		var oldNav = parseInt($(this).find('span').text());
 
 		if (classToMove === 'den-child') {
-			if ($(this).hasClass('den-child')) {
+			if ($(this).hasClass('den-child' || 'den')) {
 				navToMove = navToMove + oldNav;
 			} else {
 				var diff = navToMove - oldNav;
 				if (diff > 0) {
 					navToMove = Math.abs(diff);
 					$(this).addClass('den-child');
-					$(this).removeClass('rugge-child');
+					$(this).removeClass('rugge-child').removeClass('rugge');
 				} else if (diff < 0) {
 					navToMove = Math.abs(diff);
 					$(this).addClass('rugge-child');
-					$(this).removeClass('den-child');
+					// se era il pianeta padre gli tolgo la classe padre
+					$(this).removeClass('den-child');			
 				} else {
 					navToMove = '00';
 					$(this).removeClass('den-child rugge-child');
 				}
 			}
 		} else {
-			if ($(this).hasClass('rugge-child') ) {
+			if ($(this).hasClass('rugge-child || rugge') ) {
 				navToMove = navToMove + oldNav;
 			} else {
 				var diff = navToMove - oldNav;
 				if (diff > 0) {
 					navToMove = Math.abs(diff);
 					$(this).addClass('rugge-child');
-					$(this).removeClass('den-child');
+					$(this).removeClass('den-child').removeClass('den');
 				} else if (diff < 0) {
 					navToMove = Math.abs(diff);
 					$(this).addClass('den-child');
-					$(this).removeClass('rugge-child');
+					// se era il pianeta padre gli tolgo la classe padre
+					$(this).removeClass('rugge-child');				
 				} else {
 					navToMove = '00';
 					$(this).removeClass('rugge-child den-child');

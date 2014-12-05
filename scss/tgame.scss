@@ -30,16 +30,16 @@
 	line-height: 90px;
 	font-family: helvetica; 
 	display: inline-block;
-
-	&.den {background-color: purple; }
-	&.rugge { background-color: lightgreen; }
-
 	&.den-child {
 		background-color: lighten(purple, 20%);
 	}
 	&.rugge-child {
 		background-color: lighten(lightgreen, 20%); 
 	}
+	&.den {background-color: purple; }
+	&.rugge { background-color: lightgreen; }
+
+	
 
 	> span {
 		pointer-events: none;
