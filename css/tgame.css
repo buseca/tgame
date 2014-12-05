@@ -2,8 +2,11 @@
 * Chat Animations
 *
 */
+
 * {
-  box-sizing: border-box; }
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 
 .universo {
   background-color: grey;
@@ -13,7 +16,8 @@
   top: 0;
   left: 0;
   text-align: center;
-  padding-top: 10px; }
+  padding-top: 10px;
+}
 
 .planet {
   width: 90px;
@@ -25,14 +29,26 @@
   border-radius: 100%;
   line-height: 90px;
   font-family: helvetica;
-  display: inline-block; }
-  .planet.den {
-    background-color: purple; }
-  .planet.rugge {
-    background-color: lightgreen; }
-  .planet.den-child {
-    background-color: #cc00cc; }
-  .planet.rugge-child {
-    background-color: #d2f8d2; }
-  .planet > span {
-    pointer-events: none; }
+  display: inline-block;
+}
+
+.planet.den {
+  background-color: purple;
+}
+
+.planet.rugge {
+  background-color: lightgreen;
+}
+
+.planet.den-child {
+  background-color: #cc00cc;
+}
+
+.planet.rugge-child {
+  background-color: #d2f8d2;
+}
+
+.planet > span {
+  pointer-events: none;
+  color: black;
+}

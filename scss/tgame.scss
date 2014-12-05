@@ -12,10 +12,10 @@
 	height: 480px;
 	width: 320px;
 	position: absolute;
-	top: 0;
+	top: 0; 
 	left: 0;
-	text-align: center;
-	padding-top: 10px;
+	text-align: center; 
+	padding-top: 10px; 
 }
 
 .planet {
@@ -37,10 +37,11 @@
 		background-color: lighten(purple, 15%);
 	}
 	&.rugge-child {
-		background-color: lighten(lightgreen, 15%);
+		background-color: lighten(lightgreen, 15%); 
 	}
 
 	> span {
 		pointer-events: none;
+		color: black;
 	}
 }
