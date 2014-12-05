@@ -9,6 +9,7 @@
 }
 
 .universo {
+  display: none;
   background-color: grey;
   height: 480px;
   width: 320px;
@@ -41,11 +42,11 @@
 }
 
 .planet.den-child {
-  background-color: #cc00cc;
+  background-color: #e600e6;
 }
 
 .planet.rugge-child {
-  background-color: #d2f8d2;
+  background-color: #e8fce8;
 }
 
 .planet > span {

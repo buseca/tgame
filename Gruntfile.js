@@ -24,7 +24,7 @@ module.exports = function(grunt) {
 		files: ['scss/tgame.scss'],
 		tasks: ['sass', 'autoprefixer'],
 		livereload: {
-			files: ['scss/tgame.scss'],
+			files: ['scss/tgame.scss','index.html','js/tgame.js','js/login.js'],
 			options: {
 				livereload: true
 			}
