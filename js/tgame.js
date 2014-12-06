@@ -28,13 +28,14 @@ var denNav = den.find('span').text();
 
 
 
-//faccio il mining delle navicelle sui pianeti madre
+//faccio il mining delle navicelle sui pianeti madre 
 setInterval(function() {
   ++ ruggeNav;
   ++ denNav;
   rugge.find('span').text(ruggeNav);
   denVal.text(denNav);
-}, 1000);
+}, 2000);
+
 
 
 var navToMove, classToMove;
@@ -49,7 +50,6 @@ planet.on('click', function () {
 		}
 		navToMove = parseInt($(this).find('span').text()) - 1;
 		$(this).find('span').text('1');
-		console.log(navToMove);
 		
 		if ($(this).hasClass('den')) {
 			denNav = '1';
@@ -130,36 +130,60 @@ planet.on('click', function () {
 var tGame = new Firebase('https://tgame.firebaseio.com/');
 var ruggeNavToSend, unoNavToSend, dueNavToSend, treNavToSend, quattroNavToSend, cinqueNavToSend, seiNavToSend, setteNavToSend;
 
-// mando su i dati ad ogni click 
+// scarico l'oggetto con i valori delle navi dal DB
+tGame.child("navicellePianeti").on("value", function(snapshot) {
+	var navicellePianeti = snapshot.val();
+	// inserisco ogni valore nel rispettivo pianeta dello stage
+	rugge.find('span').text(navicellePianeti.ruggeNav);
+	console.log(navicellePianeti.ruggeNav);
+	den.find('span').text(navicellePianeti.denNav);
+	uno.find('span').text(navicellePianeti.unoNav);
+	due.find('span').text(navicellePianeti.dueNav);
+	tre.find('span').text(navicellePianeti.treNav);
+	quattro.find('span').text(navicellePianeti.quattroNav);
+	cinque.find('span').text(navicellePianeti.cinqueNav);
+	sei.find('span').text(navicellePianeti.seiNav);
+	sette.find('span').text(navicellePianeti.setteNav);
+	ruggeNav = navicellePianeti.ruggeNav;
+	denNav = navicellePianeti.denNav;
+});
+
+
+
+// mando su i dati dei pianeti aggiornati ad ogni click 
 $("*").click(function () {
 
-// metto in variabili gli attuali valori delle navicelle sui rispettivi pianeti
-  ruggeNavToSend = rugge.find('span').text();
-  denNavToSend = den.find('span').text();
-  unoNavToSend = uno.find('span').text();
-  dueNavToSend = due.find('span').text();
-  treNavToSend = tre.find('span').text();
-  quattroNavToSend = quattro.find('span').text();
-  cinqueNavToSend = cinque.find('span').text();
-  seiNavToSend = sei.find('span').text();
-  setteNavToSend = sette.find('span').text();
+	// accedo ai valori aggiornati delle navi dei pianeti e li metto in variabili per buttarli su
+	ruggeNavToSend = rugge.find('span').text();
+	denNavToSend = den.find('span').text();
+	unoNavToSend = uno.find('span').text();
+	dueNavToSend = due.find('span').text();
+	treNavToSend = tre.find('span').text();
+	quattroNavToSend = quattro.find('span').text();
+	cinqueNavToSend = cinque.find('span').text();
+	seiNavToSend = sei.find('span').text();
+	setteNavToSend = sette.find('span').text();
 
-// mando su l'oggetto con SET , che sovrascrive quelli vecchi
-  tGame.set( { navicellePianeti: { 
-  		denNav: denNav,
-  		ruggeNav: ruggeNav,
-  		unoNav: unoNavToSend,
-  		dueNav: dueNavToSend,
-  		treNav: treNavToSend,
-  		quattroNav: quattroNavToSend,
-  		cinqueNav: cinqueNavToSend,
-  		seiNav: seiNavToSend,
-  		setteNav: setteNavToSend
-  	}
+	// mando su l'oggetto con UPDATE
 
-  });
+	tGame.update( { navicellePianeti: { 
+			denNav: denNavToSend,
+			ruggeNav: ruggeNavToSend,
+			unoNav: unoNavToSend,
+			dueNav: dueNavToSend,
+			treNav: treNavToSend,
+			quattroNav: quattroNavToSend,
+			cinqueNav: cinqueNavToSend,
+			seiNav: seiNavToSend,
+			setteNav: setteNavToSend
+		}
+
+	});
 
 });
+
+
+
 
 
 
