@@ -43,7 +43,7 @@ $("#login").click(function () {
 ref.onAuth(function(authData) {
   if (authData) {
     // user authenticated with Firebase
-    console.log("User ID: " + authData.uid + ", Provider: " + authData.provider);
+    console.log("User ID: " + authData.uid + ", email: " + authData.password.email);
     // se loggato mostro il gioco, se no lo nascondo
     $('.universo').slideDown();
     $('.pannello').css('display','none');
