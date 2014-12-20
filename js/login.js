@@ -48,7 +48,8 @@ ref.onAuth(function(authData) {
     $('.universo').slideDown();
     $('.pannello').css('display','none');
   } else {
-    // user is logged out
+    $('.universo').slideUp();
+    $('.pannello').css('display','block');
   }
 });
 
