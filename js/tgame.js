@@ -1,13 +1,9 @@
 $(document).ready(function() {
 
 
-// mappo i pianeti e creo le loro varibili
-
-// tutti i pianeti nelo stage
+// tutti i pianeti nelo stage:
 var planet = $('.planet');
-
-
-// pianeti generici
+// pianeti generici:
 var p1 = $('.p1');
 var p2 = $('.p2');
 var p3 = $('.p3');
@@ -23,15 +19,63 @@ ref.onAuth(function(authData) {
 
     var tGame = new Firebase('https://tgame.firebaseio.com');
     tGame.on("value", function(snapshot) {
+
+
+
     	// oggetto json con tutti i dati scricati al loading della pagina:
     	var allData = snapshot.val();
-    	// oggetto json con dati dei playrs:
+    	// oggetto json con dati dei players:
     	var allDataPlayers = allData.gameData.players;
+    	// oggetto json con dati generici dei pianeti:
+    	var allDataPlanetsStage = allData.gameData.planetsOnStage;
+    	// oggetto json con dati dei pianeti relativi al Round:
+    	var allDataPlanetsRound = allData.roundData;
+
     	// array delle chiavi dell'oggetto allDataPlayers:
     	var arrPlayers = Object.keys(allDataPlayers);
     	// numero delle chiavi e quindi dei players:
     	var numberOfPlayers = arrPlayers.length;
 
+    	// array delle chiavi dell'oggetto allDataPlanetsStage:
+    	var arrPlanets = Object.keys(allDataPlanetsStage);
+    	// numero delle chiavi e quindi dei pianeti:
+    	var numberOfPlanets = arrPlanets.length;
+
+    	// array delle chiavi dell'oggetto allDataPlanetsRound:
+    	var arrPlanetsRound = Object.keys(allDataPlanetsRound);
+
+    	// oggetto json con dati del round:
+    	var allDataRound = allData.roundData;
+
+    	// email dei giocatori:
+    	var pl1 = allDataPlayers.pl1.email;
+    	var pl2 = allDataPlayers.pl2.email;
+    	var pl3 = allDataPlayers.pl3.email;
+    	// colori dei player:
+    	var colorPl1 = allDataPlayers.pl1.color;
+    	var colorPl2 = allDataPlayers.pl2.color;
+    	var colorPl3 = allDataPlayers.pl3.color;
+
+
+    	// ciclo i pianeti dello stage scrivere il numero di navi, per capire di chi sono e colorarli di conseguenza
+    	for (index = 0; index < numberOfPlanets; ++index) {
+
+    		thisPlanetKey = arrPlanetsRound[index];
+    	    var pNavs = allDataRound[thisPlanetKey].navs ;
+    	    $('#' + thisPlanetKey).text(pNavs);
+    	    
+    	    if ( allDataRound[thisPlanetKey].owner === pl1 ) {
+    	    	$('#' + thisPlanetKey).css('background',colorPl1);
+    	    }
+    	    if ( allDataRound[thisPlanetKey].owner === pl2 ) {
+    	    	$('#' + thisPlanetKey).css('background',colorPl2);
+    	    }
+    	    if ( allDataRound[thisPlanetKey].owner === pl3 ) {
+    	    	$('#' + thisPlanetKey).css('background',colorPl3);
+    	    }
+    	}
+
+    	
     	// ciclo l'oggetto dei players per fare il matching con la mail che ha fatto il login e capire chi è il player attuale
     	for (index = 0; index < numberOfPlayers; ++index) {
     	    if ( allDataPlayers[arrPlayers[index]].email === authData.password.email ) {
@@ -39,14 +83,84 @@ ref.onAuth(function(authData) {
     			var currMotherPlanet = allDataPlayers[arrPlayers[index]].motherPlanet;
     			var currPlayerName = allDataPlayers[arrPlayers[index]].name;
     			var currPlayerId = allDataPlayers[arrPlayers[index]].id;
+    			var currColorPlayer = allDataPlayers[arrPlayers[index]].color;
     	    }
     	}
 
-    	// al click sul pianeta verifico se è il pianeta madre del player
+
+    	// imposto il controllo del turno
+    	var activePlayerId = 1 ;
+	    console.log(activePlayerId);
+
+	    // variabile per contare i click del player
+    	var currNavPrimo ;
+
+    	// al click sul pianeta verifico se è del current player
     	$(".planet").click(function () {
-    		if ( $(this).attr('id') === currMotherPlanet ) {
-    			$(this).text('clicked!');
+    		if ( currPlayerId == activePlayerId ) {
+	    		var idPianetaCliccato = $(this).attr('id');
+	    		var currOwner = allDataRound[idPianetaCliccato].owner;
+	    		// se è il primo click:
+	    		if ( !currNavPrimo ) {
+		    		if ( currOwner == currPlayer ) {
+		    			$(this).text('clicked!');
+		    			currNavPrimo = allDataRound[idPianetaCliccato].navs -1;
+		    			var ownerOrigine = allDataRound[idPianetaCliccato].owner;
+		    			var pianetaOrigine = idPianetaCliccato;
+		    			$('#' + idPianetaCliccato).text('1');
+		    		} else {
+		    		}
+		    	// se è il secondo click
+    			} else {
+					var currNavSecondo = allDataRound[idPianetaCliccato].navs;
+					// se è lo stesso proprietario
+    				if ( currOwner == currPlayer ) {
+    					//faccio la somma e pubblico i dati
+    					var resultNav = currNavPrimo + currNavSecondo ;
+    					$('#' + idPianetaCliccato).text(resultNav);
+
+    				} else {
+    					// se il proprietario è diverso
+    					// faccio la differenza e pubblico i dati
+    					var resultNavTemp = currNavPrimo - currNavSecondo;
+    					var resultNav = Math.abs(resultNavTemp);
+    					$('#' + idPianetaCliccato).text(resultNav);
+                        console.log('result: ' + resultNav);
+    				}
+
+		    		// passo il turno al giocatore successivo
+		    		if ( currPlayerId == 1 ) {
+		    			activePlayerId = 2 ;
+		    		} else if ( currPlayerId == 2 ) {
+		    			activePlayerId = 3 ;
+		    		} else if ( currPlayerId == 3 ) {
+		    			activePlayerId = 1 ;
+		    		}
+
+                    //
+                    // DEVO SALVARE A DATABASE IL GIOCATORE ATTIVO
+                    //
+
+
+
+	    			// // aggiorno i dati del pianeta di origine su sb:
+	    			// var refPianetaOrigine = new Firebase('https://tgame.firebaseio.com/roundData/' + pianetaOrigine +'/');
+		    		// refPianetaOrigine.update( {
+		    		// 	navs : 1 ,
+		    		// });
+		    		// // aggiorno i dati del pianeta di destinazione sul db:
+		    		// var refPianetaCliccato = new Firebase('https://tgame.firebaseio.com/roundData/' + idPianetaCliccato +'/');
+		    		// refPianetaCliccato.update( {
+		    		// 	navs : resultNav ,
+		    		// });
+
+
+
+    			}
+    		} else {
+    			alert('tocca un altro');
     		}
+
     	});
 
 
@@ -64,71 +178,6 @@ ref.onAuth(function(authData) {
     alert('utente non autenticato');
   }
 });
-
-
-
-
-
-
-
-
-
-//  Connessioni a Firebase
-
-// scarico i dati generali relativi alla partita
-var tGameGameData = new Firebase('https://tgame.firebaseio.com/gameData');
-tGameGameData.on("value", function(snapshot) {
-	var gameData = snapshot.val();
-});
-
-
-
-// scarico i dati relativi lle navicelle dei pianeti sullo stage
-var tGameNavicellePianeti = new Firebase('https://tgame.firebaseio.com/navicellePianeti');
-tGameNavicellePianeti.on("value", function(snapshot) {
-	var navicellePianeti = snapshot.val();
-
-	// aggiorno le variabili 
-	p1Nav = navicellePianeti.p1Nav;
-	p2Nav = navicellePianeti.p2Nav;
-	p3Nav = navicellePianeti.p3Nav;
-	p4Nav = navicellePianeti.p4Nav;
-
-	// inserisco ogni valore nel rispettivo pianeta dello stage
-	p1.find('span').text(p1Nav);
-	p2.find('span').text(p2Nav);
-	p3.find('span').text(p3Nav);
-	p4.find('span').text(p4Nav);
-});
-
-
-
-// mando su i dati dei pianeti aggiornati ad ogni click 
-$("*").click(function () {
-
-	// accedo ai valori aggiornati delle navi dei pianeti e li metto in variabili per buttarli su
-	/* 
-	ERROR > non va bene appoggiarsi al dom per ricavare i dati delle variabili, perchè il dom è facilmente modificabile
-	bisogna sempre basarsi sui dati in database, tenendoli sempre aggiornati e scaricandoli quando servono.
-	*/
-	p1Nav = p1.find('span').text();
-	p2Nav = p2.find('span').text();
-	p3Nav = p3.find('span').text();
-	p4Nav = p4.find('span').text();
-
-	// mando su l'oggetto con UPDATE
-
-	tGameNavicellePianeti.update( { 
-		p1Nav : p1Nav,
-		p2Nav : p2Nav,
-		p3Nav : p3Nav,
-		p4Nav : p4Nav,
-	});
-
-});
-
-
-
 
 
 
@@ -235,18 +284,10 @@ $("*").click(function () {
 
 
 
-
-
-
-
-
-
-
-
 // var tGame = new Firebase('https://tgame.firebaseio.com/');
 
 
-// // // SET DEL JSON DEL DATABSE:
+// // SET DEL JSON DEL DATABSE:
 
 // tGame.set( { 
 // 	// dati della partita
@@ -257,19 +298,22 @@ $("*").click(function () {
 // 				email : 'ruggero.motta@gmail.com',
 // 				name : 'rugge',
 // 				motherPlanet : 'p1',
-// 				id : 1
+// 				id : 1,
+// 				color : 'lightgreen',
 // 			},
 // 			pl2 : {
 // 				email : 'daniele.bertella@gmail.com',
 // 				name : 'den',
 // 				motherPlanet : 'p2',
-// 				id : 2
+// 				id : 2,
+// 				color : 'lightblue',
 // 			},
 // 			pl3 : {
 // 				email : 'gigi@gigi.com',
 // 				name : 'gigi',
 // 				motherPlanet : 'p3',
-// 				id : 3
+// 				id : 3,
+// 				color : 'orange',
 // 			}
 // 		},
 // 		numberOfPlanets : 4 ,
@@ -283,7 +327,7 @@ $("*").click(function () {
 // 			},
 // 			p2 : {
 // 				type : 'mother',
-// 				initNav : '2',
+// 				initNav : '1',
 // 				level : '0',
 // 				connections : ['p1','p3','p4'],
 // 				id : '2'
@@ -307,8 +351,8 @@ $("*").click(function () {
 // 	// dati del turno
 // roundData : { 
 // 		p1 : {
-// 			navs : 'p1Nav',
-// 			owner : 'owner',
+// 			navs : 2,
+// 			owner : 'ruggero.motta@gmail.com',
 // 			navInArrivo : {
 // 				pl1 : 0,
 // 				pl2 : 0,
@@ -316,8 +360,8 @@ $("*").click(function () {
 // 			}
 // 		},
 // 		p2 : {
-// 			nav : 'p1Nav',
-// 			owner : 'owner',
+// 			navs : 2,
+// 			owner : 'daniele.bertella@gmail.com',
 // 			navInArrivo : {
 // 				pl1 : 0,
 // 				pl2 : 0,
@@ -325,8 +369,8 @@ $("*").click(function () {
 // 			}
 // 		},
 // 		p3 : {
-// 			nav : 'p3Nav',
-// 			owner : 'owner',
+// 			navs : 2,
+// 			owner : 'gigi@gigi.com',
 // 			navInArrivo : {
 // 				pl1 : 0,
 // 				pl2 : 0,
@@ -334,8 +378,8 @@ $("*").click(function () {
 // 			}
 // 		},
 // 		p4 : {
-// 			nav : 'p4Nav',
-// 			owner : 'owner',
+// 			navs : 5,
+// 			owner : 'neutro',
 // 			navInArrivo : {
 // 				pl1 : 0,
 // 				pl2 : 0,
@@ -343,8 +387,6 @@ $("*").click(function () {
 // 			}
 // 		}
 // 	}
-			
-
 // });
 
 
