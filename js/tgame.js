@@ -15,7 +15,6 @@ var p4 = $('.p4');
 ref.onAuth(function(authData) {
   if (authData) {
     // user authenticated with Firebase
-    console.log("User ID: " + authData.uid + ", email: " + authData.password.email);
 
     var tGame = new Firebase('https://tgame.firebaseio.com');
     tGame.on("value", function(snapshot) {
@@ -55,6 +54,7 @@ ref.onAuth(function(authData) {
     	var colorPl1 = allDataPlayers.pl1.color;
     	var colorPl2 = allDataPlayers.pl2.color;
     	var colorPl3 = allDataPlayers.pl3.color;
+        var colorNeutro = 'white';
 
 
     	// ciclo i pianeti dello stage scrivere il numero di navi, per capire di chi sono e colorarli di conseguenza
@@ -63,6 +63,7 @@ ref.onAuth(function(authData) {
     		thisPlanetKey = arrPlanetsRound[index];
     	    var pNavs = allDataRound[thisPlanetKey].navs ;
     	    $('#' + thisPlanetKey).text(pNavs);
+            console.log('navi del' + index + ': ' + pNavs);
     	    
     	    if ( allDataRound[thisPlanetKey].owner === pl1 ) {
     	    	$('#' + thisPlanetKey).css('background',colorPl1);
@@ -88,12 +89,12 @@ ref.onAuth(function(authData) {
     	}
 
 
-    	// imposto il controllo del turno
-    	var activePlayerId = 1 ;
-	    console.log(activePlayerId);
+    	// imposto il controllo del turno prendendo l'ID del player attivo dai dati appena scaricati dal db
+    	var activePlayerId = allData.activePlayerId ;
 
 	    // variabile per contare i click del player
-    	var currNavPrimo ;
+        var currNavPrimo = null;
+    	var ownerOrigine, idPianetaOrigine, resultColor ;
 
     	// al click sul pianeta verifico se è del current player
     	$(".planet").click(function () {
@@ -101,64 +102,117 @@ ref.onAuth(function(authData) {
 	    		var idPianetaCliccato = $(this).attr('id');
 	    		var currOwner = allDataRound[idPianetaCliccato].owner;
 	    		// se è il primo click:
-	    		if ( !currNavPrimo ) {
+	    		if ( currNavPrimo == null ) {
 		    		if ( currOwner == currPlayer ) {
-		    			$(this).text('clicked!');
 		    			currNavPrimo = allDataRound[idPianetaCliccato].navs -1;
-		    			var ownerOrigine = allDataRound[idPianetaCliccato].owner;
-		    			var pianetaOrigine = idPianetaCliccato;
+		    			ownerOrigine = allDataRound[idPianetaCliccato].owner;
+		    			idPianetaOrigine = idPianetaCliccato;
 		    			$('#' + idPianetaCliccato).text('1');
+                        console.log('ho cliccato un mio pianeta')
 		    		} else {
 		    		}
 		    	// se è il secondo click
-    			} else {
+    			} else if( idPianetaCliccato != idPianetaOrigine ) {
 					var currNavSecondo = allDataRound[idPianetaCliccato].navs;
 					// se è lo stesso proprietario
     				if ( currOwner == currPlayer ) {
-    					//faccio la somma e pubblico i dati
+    					//faccio la somma e pubblico i dati 
     					var resultNav = currNavPrimo + currNavSecondo ;
-    					$('#' + idPianetaCliccato).text(resultNav);
+                        var refPianetaCliccato = new Firebase('https://tgame.firebaseio.com/roundData/' + idPianetaCliccato +'/');
+                        refPianetaCliccato.update( {
+                            navs : resultNav ,
+                        });
+                        console.log('upload dati pianeta destinazione se è lo stesso proprietario');
+                        console.log('risutato calcolato click:' + resultNav);
 
     				} else {
     					// se il proprietario è diverso
     					// faccio la differenza e pubblico i dati
-    					var resultNavTemp = currNavPrimo - currNavSecondo;
-    					var resultNav = Math.abs(resultNavTemp);
-    					$('#' + idPianetaCliccato).text(resultNav);
-                        console.log('result: ' + resultNav);
+    					var resultNavTemp = currNavPrimo - currNavSecondo ;
+    					var resultNav = Math.abs(resultNavTemp) ;
+                        // se l'attacco è andato a buon fine cambio il proprietario del pianeta
+                        if ( currNavPrimo > currNavSecondo ) {
+                            resultColor = currColorPlayer ;
+                            $(this).css('background',resultColor);
+                            // aggiorno i dati del pianeta di destinazione sul db:
+                            var refPianetaCliccato = new Firebase('https://tgame.firebaseio.com/roundData/' + idPianetaCliccato +'/');
+                            refPianetaCliccato.update( {
+                                navs : resultNav ,
+                                owner : currPlayer ,
+                            });
+                            console.log('upload dati pianeta destinazione se 1st > 2nd');
+
+                        } else if ( currNavPrimo == currNavSecondo ) {
+                            $(this).css('background','white');
+                            resultColor = colorNeutro ;
+                            // aggiorno i dati del pianeta di destinazione sul db:
+                            var refPianetaCliccato = new Firebase('https://tgame.firebaseio.com/roundData/' + idPianetaCliccato +'/');
+                            refPianetaCliccato.update( {
+                                navs : resultNav ,
+                                owner : 'neutro' ,
+                            });
+                            console.log('upload dati pianeta destinazione se 1st è = 2nd');
+                        } else if ( currNavPrimo < currNavSecondo ) {
+                            // aggiorno i dati del pianeta di destinazione sul db:
+                            var refPianetaCliccato = new Firebase('https://tgame.firebaseio.com/roundData/' + idPianetaCliccato +'/');
+                            refPianetaCliccato.update( {
+                                navs : resultNav ,
+                            });
+                            console.log('upload dati pianeta destinazione se 1st < 2nd');
+                        }
     				}
+                    
+	    			// aggiorno i dati del pianeta di origine su db:
+	    			var refIdPianetaOrigine = new Firebase('https://tgame.firebaseio.com/roundData/' + idPianetaOrigine +'/');
+		    		refIdPianetaOrigine.update( {
+		    			navs : 1 ,
+		    		});
+                    console.log('upload dati pianeta di origine');
 
-		    		// passo il turno al giocatore successivo
-		    		if ( currPlayerId == 1 ) {
-		    			activePlayerId = 2 ;
-		    		} else if ( currPlayerId == 2 ) {
-		    			activePlayerId = 3 ;
-		    		} else if ( currPlayerId == 3 ) {
-		    			activePlayerId = 1 ;
-		    		}
+                    // pubblico il risultato dello scontro sullo stage
+                    $('#' + idPianetaCliccato).text(resultNav);
+                    console.log('risultato pubblicato sullo stage' + resultNav);
 
-                    //
-                    // DEVO SALVARE A DATABASE IL GIOCATORE ATTIVO
-                    //
-
-
-
-	    			// // aggiorno i dati del pianeta di origine su sb:
-	    			// var refPianetaOrigine = new Firebase('https://tgame.firebaseio.com/roundData/' + pianetaOrigine +'/');
-		    		// refPianetaOrigine.update( {
-		    		// 	navs : 1 ,
-		    		// });
-		    		// // aggiorno i dati del pianeta di destinazione sul db:
-		    		// var refPianetaCliccato = new Firebase('https://tgame.firebaseio.com/roundData/' + idPianetaCliccato +'/');
-		    		// refPianetaCliccato.update( {
-		    		// 	navs : resultNav ,
-		    		// });
+                    // azzero i click 
+                    currNavPrimo = null;
+                    console.log('currNavPrimo :' + currNavPrimo);
 
 
+                    // passo il turno al giocatore successivo
+                    // if ( currPlayerId == 1 ) {
+                    //     activePlayerId = 1 ;//da modificare in '2'
+                    //     // aggiorno l'active player sul db
+                    //     var refActivePlayerId = new Firebase('https://tgame.firebaseio.com/');
+                    //     refActivePlayerId.update( {
+                    //      activePlayerId : 1,  //da modificare in '2'
+                    //     });
 
-    			}
+                    // } else if ( currPlayerId == 2 ) {
+                    //     activePlayerId = 3 ;
+                    //     // aggiorno l'active player sul db
+                    //     var refActivePlayerId = new Firebase('https://tgame.firebaseio.com/');
+                    //     refActivePlayerId.update( {
+                    //      activePlayerId : 3,
+                    //     });
+                    // } else if ( currPlayerId == 3 ) {
+                    //     activePlayerId = 1 ;
+                    //     // aggiorno l'active player sul db
+                    //     var refActivePlayerId = new Firebase('https://tgame.firebaseio.com/');
+                    //     refActivePlayerId.update( {
+                    //      activePlayerId : 1,
+                    //     });
+                    // }
+
+                    location.reload();
+
+
+
+    			} else {
+                    alert('scegli un pianeta diverso dal pianeta di origine')
+                }
+
     		} else {
-    			alert('tocca un altro');
+    			alert('non tocca te');
     		}
 
     	});
@@ -349,9 +403,9 @@ ref.onAuth(function(authData) {
 // 		}
 // 	},
 // 	// dati del turno
-// roundData : { 
+//     roundData : { 
 // 		p1 : {
-// 			navs : 2,
+// 			navs : 5,
 // 			owner : 'ruggero.motta@gmail.com',
 // 			navInArrivo : {
 // 				pl1 : 0,
@@ -369,7 +423,7 @@ ref.onAuth(function(authData) {
 // 			}
 // 		},
 // 		p3 : {
-// 			navs : 2,
+// 			navs : 5,
 // 			owner : 'gigi@gigi.com',
 // 			navInArrivo : {
 // 				pl1 : 0,
@@ -385,8 +439,9 @@ ref.onAuth(function(authData) {
 // 				pl2 : 0,
 // 				pl3 : 0 
 // 			}
-// 		}
-// 	}
+// 		},
+// 	},
+//     activePlayerId : 1,
 // });
 
 
