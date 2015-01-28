@@ -149,8 +149,9 @@ ref.onAuth(function(authData) {
                     console.log('l id del pianeta di origine è:' + idPianetaOrigine);
                     for (conn = 0; conn < arrCurrConnections.length ; ++conn) {
                         console.log('connessione del pianeta di destinazione:' + arrCurrConnections[conn]);
-                        if ( arrOrigineConnections[conn] == idPianetaCliccato ) {
+                        if ( arrCurrConnections[conn] == idPianetaOrigine ) {
                             continuo = true;
+                            console.log( arrCurrConnections[conn] + ' = '  + idPianetaOrigine + ' !');
                         }
                     }
 
@@ -171,7 +172,6 @@ ref.onAuth(function(authData) {
 
         				} else {
         					// se il proprietario è diverso
-        					// faccio la differenza e pubblico i dati
         					var resultNavTemp = currNavPrimo - currNavSecondo ;
         					var resultNav = Math.abs(resultNavTemp) ;
                             console.log('è un attacco ad un pianeta avversario: ' + currNavPrimo + ' contro ' + currNavSecondo + ' rimane: ' + resultNav );
@@ -186,6 +186,9 @@ ref.onAuth(function(authData) {
                                     owner : currPlayer ,
                                 });
                                 controlloMining = true;
+                                // cambio il propietario nei dati scaricati, se no il mining sarà errato:
+                                allDataRound[idPianetaCliccato].owner = currPlayer ;
+                                console.log('il nuovo proprietario del pianeta attaccato:' + allDataRound[idPianetaCliccato].owner);
                                 console.log('upload dati pianeta destinazione se 1st > 2nd');
                                 console.log('risultato dello scontro che metto a database: ' + resultNav);
 
@@ -220,10 +223,6 @@ ref.onAuth(function(authData) {
     		    		});
                         console.log('upload dati pianeta di origine');
 
-                        // pubblico il risultato dello scontro sullo stage
-                        $('#' + idPianetaCliccato).text(resultNav);
-                        console.log('risultato pubblicato sullo stage' + resultNav);
-
                         // azzero i click 
                         currNavPrimo = null;
                         console.log('currNavPrimo :' + currNavPrimo);
@@ -238,6 +237,7 @@ ref.onAuth(function(authData) {
                             refActivePlayerId.update( {
                              activePlayerId : 2,
                             });
+                            console.log('ho aggiornato l active player a db');
 
 
 
@@ -254,11 +254,6 @@ ref.onAuth(function(authData) {
                                 }
                             }
 
-                            // tolgo -1 al numberToMine se il player successivo ha appena perso un pianeta
-                            if ( currOwner == pl2 && numberToMine != 0 && controlloMining == true ) {
-                                numberToMine = numberToMine-1 ;
-                            }
-
                             // rifaccio il loop dei pianeti del player e aggiorno le nav con il mining
                             var thisPlanetKeyForMining2;
                             var arrPlanetsToMine = []
@@ -269,12 +264,12 @@ ref.onAuth(function(authData) {
                                 var theOwner = allDataRound[thisPlanetKeyForMining2].owner ;
                                 var preMiningNavs = allDataRound[thisPlanetKeyForMining2].navs;
                                 var minedNavs = preMiningNavs + numberToMine;
-                                if ( allDataRound[thisPlanetKeyForMining2].owner === pl2) {
+                                if ( theOwner === pl2) {
                                     arrPlanetsToMine.push(thisPlanetKeyForMining2); 
                                     arrNumberToMine.push(minedNavs);
                                 }
                             }
-                            console.log('fine secondo loop');
+                            console.log('fine loop per capire cosa minare');
                             var numberOfPlanetsToMine = arrPlanetsToMine.length;
 
                             console.log('numberOfPlanetsToMine' + numberOfPlanetsToMine);
@@ -300,6 +295,7 @@ ref.onAuth(function(authData) {
                             refActivePlayerId.update( {
                              activePlayerId : 1,
                             });
+                            console.log('ho aggiornato l active player a db');
 
 
 
@@ -316,11 +312,6 @@ ref.onAuth(function(authData) {
                                 }
                             }
 
-                            // tolgo -1 al numberToMine se il player successivo ha appena perso un pianeta
-                            if ( currOwner == pl1 && numberToMine != 0 && controlloMining == true ) {
-                                numberToMine = numberToMine-1 ;
-                            }
-
                             // rifaccio il loop dei pianeti del player e aggiorno le nav con il mining
                             var thisPlanetKeyForMining2;
                             var arrPlanetsToMine = []
@@ -331,12 +322,12 @@ ref.onAuth(function(authData) {
                                 var theOwner = allDataRound[thisPlanetKeyForMining2].owner ;
                                 var preMiningNavs = allDataRound[thisPlanetKeyForMining2].navs;
                                 var minedNavs = preMiningNavs + numberToMine;
-                                if ( allDataRound[thisPlanetKeyForMining2].owner === pl1) {
+                                if ( theOwner === pl1) {
                                     arrPlanetsToMine.push(thisPlanetKeyForMining2); 
                                     arrNumberToMine.push(minedNavs);
                                 }
                             }
-                            console.log('fine secondo loop');
+                            console.log('fine loop per capire cosa minare');
                             var numberOfPlanetsToMine = arrPlanetsToMine.length;
 
                             console.log('numberOfPlanetsToMine' + numberOfPlanetsToMine);
@@ -355,6 +346,8 @@ ref.onAuth(function(authData) {
                         } 
                         // PL3XXX
                         // else if ( currPlayerId == 3 ) {
+
+                                // codice per il mining obsoleto!!!!!!!!!!!!!!
                         //     activePlayerId = 1 ;
                         //     // aggiorno l'active player sul db
                         //     var refActivePlayerId = new Firebase('https://tgame.firebaseio.com/');
@@ -416,7 +409,7 @@ ref.onAuth(function(authData) {
                         // }
 
                         // faccio il reload per riazzerare le variabili e aggiornare lo stage
-                        // location.reload();
+                        location.reload();
                        
                     } else {
                         alert('pianeta non attaccabile');
@@ -730,7 +723,7 @@ ref.onAuth(function(authData) {
 //         },
 //         p13 : {
 //             navs : 4,
-//             owner : 'gigi@gigi.com',
+//             owner : 'neutro',
 //             navInArrivo : {
 //                 pl1 : 0,
 //                 pl2 : 0,
