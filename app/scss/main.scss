@@ -1,15 +1,5 @@
-/* Space out content a bit */
-body {
-  padding-top: 20px;
-  padding-bottom: 20px;
-}
-
-/* Everything but the jumbotron gets side spacing for mobile first views */
-.header,
-.marketing,
-.footer {
-  padding-left: 15px;
-  padding-right: 15px;
+* {
+  box-sizing: border-box;
 }
 
 /* Custom page header */
@@ -31,49 +21,42 @@ body {
   border-top: 1px solid #e5e5e5;
 }
 
-/* Customize container */
-@media (min-width: 768px) {
-  .container {
-    max-width: 730px;
-  }
-}
-.container-narrow > hr {
-  margin: 30px 0;
+.universo {
+  //display: none;
+  background-color: grey;
+  height: 600px;
+  width: 480px;
+  position: absolute;
+  top: 0; 
+  left: 0;
+  text-align: center; 
+  padding-top: 10px; 
 }
 
-/* Main marketing message and sign up button */
-.jumbotron {
+.planet {
+  width: 80px;
+  height: 80px;
+  background-color: white;
   text-align: center;
-  border-bottom: 1px solid #e5e5e5;
-}
-.jumbotron .btn {
-  font-size: 21px;
-  padding: 14px 24px;
-}
-
-/* Supporting marketing content */
-.marketing {
-  margin: 40px 0;
-}
-.marketing p + h4 {
-  margin-top: 28px;
-}
-
-/* Responsive: Portrait tablets and up */
-@media screen and (min-width: 768px) {
-  /* Remove the padding we set earlier */
-  .header,
-  .marketing,
-  .footer {
-    padding-left: 0;
-    padding-right: 0;
+  font-size: 18px;
+  color: black;
+  border-radius: 100%;
+  line-height: 90px;
+  font-family: helvetica; 
+  display: inline-block;
+  &.den-child {
+    background-color: lighten(purple, 20%);
   }
-  /* Space out the masthead */
-  .header {
-    margin-bottom: 30px;
+  &.rugge-child {
+    background-color: lighten(lightgreen, 20%); 
   }
-  /* Remove the bottom border on the jumbotron for visual effect */
-  .jumbotron {
-    border-bottom: 0;
+  &.den {background-color: purple; }
+  &.rugge { background-color: lightgreen; }
+
+  
+
+  > span {
+    pointer-events: none;
+    color: black;
   }
 }
