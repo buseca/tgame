@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "main.css",
+	"sources": [
+		"../scss/main.scss"
+	],
+	"sourcesContent": [],
+	"mappings": ";AACA;EACE,aAAa;EACb,gBAAgB;;;AAIlB,SAAS,YAAY;EAGnB,cAAc;EACd,eAAe;;;AAIjB;EACE,eAAe;;;AAGjB,QAAQ;EACN,YAAY;EACZ,eAAe;EACf,aAAa;EACb,gBAAgB;;;AAIlB;EACE,aAAa;EACb,OAAO;EACP,YAAY;;;AAId;EAAA;IAEI,WAAW;;;AAGf,oBAAoB;EAClB,QAAQ;;;AAIV;EACE,YAAY;EACZ,eAAe;;AAEjB,WAAW;EACT,WAAW;EACX,SAAS;;;AAIX;EACE,QAAQ;;AAEV,WAAW,IAAI;EACb,YAAY;;;AAId;;EACA,SAAS,YAAY;IAIjB,cAAc;IACd,eAAe;;;EAEnB;IAEI,eAAe;;;EAEnB;IAEI,eAAe",
+	"names": []
+}

@@ -1,9 +1,0 @@
-{
-  "firebase": "tgame",
-  "public": ".",
-  "ignore": [
-    "firebase.json",
-    "**/.*",
-    "**/node_modules/**"
-  ]
-}
