@@ -79,7 +79,7 @@ ref.onAuth(function(authData) {
     		thisPlanetKey = arrPlanetsRound[index];
     	    var pNavs = allDataRound[thisPlanetKey].navs ;
     	    $('#' + thisPlanetKey).text(pNavs);
-            console.log('navi del' + thisPlanetKey + ': ' + pNavs);
+            console.log('navi del pianeta ' + thisPlanetKey + ': ' + pNavs);
     	    
     	    if ( allDataRound[thisPlanetKey].owner === pl1 ) {
     	    	$('#' + thisPlanetKey).css('background',colorPl1);
@@ -121,6 +121,8 @@ ref.onAuth(function(authData) {
 
     	// al click sul pianeta verifico se è del current player
     	$(".planet").click(function () {
+            console.log('on click!');
+            console.log('activePlayerId:' + activePlayerId);
     		if ( currPlayerId == activePlayerId ) {
 	    		var idPianetaCliccato = $(this).attr('id');
 	    		var currOwner = allDataRound[idPianetaCliccato].owner;
@@ -138,6 +140,12 @@ ref.onAuth(function(authData) {
 		    		}
 		    	// se è il secondo click
     			} else if( idPianetaCliccato != idPianetaOrigine ) {
+
+                    // impedisco momentaneamente (2s) altri click fino al reload dello script
+                    $( ".planet" ).css('pointer-events','none');
+                    setTimeout(function() {
+                        $( ".planet" ).css('pointer-events','auto');
+                    }, 2000);
 
                     // imposto il controllo delle connessioni tra i 2 pianeti
                     var continuo = false;
@@ -186,7 +194,7 @@ ref.onAuth(function(authData) {
                                     owner : currPlayer ,
                                 });
                                 controlloMining = true;
-                                // cambio il propietario nei dati scaricati, se no il mining sarà errato:
+                                // cambio il propietario nei dati scaricati sul dom, direttamente nella var, se no il mining sarà errato:
                                 allDataRound[idPianetaCliccato].owner = currPlayer ;
                                 console.log('il nuovo proprietario del pianeta attaccato:' + allDataRound[idPianetaCliccato].owner);
                                 console.log('upload dati pianeta destinazione se 1st > 2nd');
@@ -211,6 +219,8 @@ ref.onAuth(function(authData) {
                                 refPianetaCliccato.update( {
                                     navs : resultNav ,
                                 });
+                                // correggere i mining su questa opzione , capire i quale variabile inserire il valore aggiornato delle navi (quale var utilizzo per definire numberToMine )
+                                allDataRound[idPianetaCliccato].navs = resultNav;
                                 console.log('upload dati pianeta destinazione se 1st < 2nd');
                                 console.log('risultato dello scontro che metto a database: ' + resultNav);
                             }
@@ -225,10 +235,11 @@ ref.onAuth(function(authData) {
 
                         // azzero i click 
                         currNavPrimo = null;
-                        console.log('currNavPrimo :' + currNavPrimo);
+                        console.log('azzero i click, currNavPrimo :' + currNavPrimo);
 
 
-                        // passo il turno al giocatore successivo
+
+
                         if ( currPlayerId == 1 ) {
 
                             activePlayerId = 2 ;
@@ -409,7 +420,7 @@ ref.onAuth(function(authData) {
                         // }
 
                         // faccio il reload per riazzerare le variabili e aggiornare lo stage
-                        location.reload();
+                        // location.reload();
                        
                     } else {
                         alert('pianeta non attaccabile');
@@ -472,7 +483,7 @@ ref.onAuth(function(authData) {
 // 				color : 'lightgreen',
 // 			},
 // 			pl2 : {
-// 				email : 'daniele.bertella@gmail.com',
+// 				email : 'mario@mario.com',
 // 				name : 'den',
 // 				motherPlanet : 'p13',
 // 				id : 2,
@@ -741,7 +752,7 @@ ref.onAuth(function(authData) {
 //         },
 //         p15 : {
 //             navs : 8,
-//             owner : 'daniele.bertella@gmail.com',
+//             owner : 'mario@mario.com',
 //             navInArrivo : {
 //                 pl1 : 0,
 //                 pl2 : 0,
