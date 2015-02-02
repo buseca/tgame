@@ -29,8 +29,8 @@ ref.onAuth(function(authData) {
   if (authData) {
     // user authenticated with Firebase
 
-    var tGame = new Firebase('https://tgame.firebaseio.com');
-    tGame.on("value", function(snapshot) {
+    var tGameRoom1 = new Firebase('https://tgame.firebaseio.com/room1/');
+    tGameRoom1.on("value", function(snapshot) {
 
 
 
@@ -63,13 +63,11 @@ ref.onAuth(function(authData) {
     	// email dei giocatori:
     	var pl1 = allDataPlayers.pl1.email;
     	var pl2 = allDataPlayers.pl2.email;
-        // PL3XXX
-    	// var pl3 = allDataPlayers.pl3.email;
+        var pl3 = allDataPlayers.pl3.email;
     	// colori dei player:
     	var colorPl1 = allDataPlayers.pl1.color;
     	var colorPl2 = allDataPlayers.pl2.color;
-        // PL3XXX
-    	// var colorPl3 = allDataPlayers.pl3.color;
+        var colorPl3 = allDataPlayers.pl3.color;
         var colorNeutro = 'white';
 
         var thisPlanetKey;
@@ -88,12 +86,11 @@ ref.onAuth(function(authData) {
     	    	$('#' + thisPlanetKey).css('background',colorPl2);
     	    }
             // PL3XXX
-    	    // if ( allDataRound[thisPlanetKey].owner === pl3 ) {
-    	    // 	$('#' + thisPlanetKey).css('background',colorPl3);
-    	    // }
+    	    if ( allDataRound[thisPlanetKey].owner === pl3 ) {
+    	    	$('#' + thisPlanetKey).css('background',colorPl3);
+    	    }
     	}
 
-    	
     	// ciclo l'oggetto dei players per fare il matching con la mail che ha fatto il login e capire chi è il player attuale
     	for (indexPl = 0; indexPl < numberOfPlayers; ++indexPl) {
     	    if ( allDataPlayers[arrPlayers[indexPl]].email === authData.password.email ) {
@@ -109,6 +106,7 @@ ref.onAuth(function(authData) {
 
     	// imposto il controllo del turno prendendo l'ID del player attivo dai dati appena scaricati dal db
     	var activePlayerId = allData.activePlayerId ;
+
         if ( currPlayerId == activePlayerId ) {
             $('.player').html('è il tuo turno');
         } else {
@@ -145,7 +143,7 @@ ref.onAuth(function(authData) {
                     $( ".planet" ).css('pointer-events','none');
                     setTimeout(function() {
                         $( ".planet" ).css('pointer-events','auto');
-                    }, 2000);
+                    }, 3000);
 
                     // imposto il controllo delle connessioni tra i 2 pianeti
                     var continuo = false;
@@ -171,7 +169,7 @@ ref.onAuth(function(authData) {
         					//faccio la somma e pubblico i dati 
         					var resultNav = currNavPrimo + currNavSecondo ;
                             console.log('è uno spostamento interno: ' + currNavPrimo + ' più ' + currNavSecondo + ' = ' + resultNav );
-                            var refPianetaCliccato = new Firebase('https://tgame.firebaseio.com/roundData/' + idPianetaCliccato +'/');
+                            var refPianetaCliccato = new Firebase('https://tgame.firebaseio.com/room1/roundData/' + idPianetaCliccato +'/');
                             refPianetaCliccato.update( {
                                 navs : resultNav ,
                             });
@@ -188,14 +186,15 @@ ref.onAuth(function(authData) {
                                 resultColor = currColorPlayer ;
                                 $(this).css('background',resultColor);
                                 // aggiorno i dati del pianeta di destinazione sul db:
-                                var refPianetaCliccato = new Firebase('https://tgame.firebaseio.com/roundData/' + idPianetaCliccato +'/');
+                                var refPianetaCliccato = new Firebase('https://tgame.firebaseio.com/room1/roundData/' + idPianetaCliccato +'/');
                                 refPianetaCliccato.update( {
                                     navs : resultNav ,
                                     owner : currPlayer ,
                                 });
                                 controlloMining = true;
-                                // cambio il propietario nei dati scaricati sul dom, direttamente nella var, se no il mining sarà errato:
+                                // cambio il propietario e le navs nei dati scaricati sul dom, direttamente nella var, se no il mining sarà errato:
                                 allDataRound[idPianetaCliccato].owner = currPlayer ;
+                                allDataRound[idPianetaCliccato].navs = resultNav;
                                 console.log('il nuovo proprietario del pianeta attaccato:' + allDataRound[idPianetaCliccato].owner);
                                 console.log('upload dati pianeta destinazione se 1st > 2nd');
                                 console.log('risultato dello scontro che metto a database: ' + resultNav);
@@ -203,8 +202,11 @@ ref.onAuth(function(authData) {
                             } else if ( currNavPrimo == currNavSecondo ) {
                                 $(this).css('background','white');
                                 resultColor = colorNeutro ;
+                                // cambio il propietario e le navs nei dati scaricati sul dom, direttamente nella var, se no il mining sarà errato:
+                                allDataRound[idPianetaCliccato].owner = 'neutro' ;
+                                allDataRound[idPianetaCliccato].navs = resultNav;
                                 // aggiorno i dati del pianeta di destinazione sul db:
-                                var refPianetaCliccato = new Firebase('https://tgame.firebaseio.com/roundData/' + idPianetaCliccato +'/');
+                                var refPianetaCliccato = new Firebase('https://tgame.firebaseio.com/room1/roundData/' + idPianetaCliccato +'/');
                                 refPianetaCliccato.update( {
                                     navs : resultNav ,
                                     owner : 'neutro' ,
@@ -214,8 +216,10 @@ ref.onAuth(function(authData) {
                                 console.log('risultato dello scontro che metto a database: ' + resultNav);
                          
                             } else if ( currNavPrimo < currNavSecondo ) {
+                                // cambio le navs nei dati scaricati sul dom, direttamente nella var, se no il mining sarà errato:
+                                allDataRound[idPianetaCliccato].navs = resultNav;
                                 // aggiorno i dati del pianeta di destinazione sul db:
-                                var refPianetaCliccato = new Firebase('https://tgame.firebaseio.com/roundData/' + idPianetaCliccato +'/');
+                                var refPianetaCliccato = new Firebase('https://tgame.firebaseio.com/room1/roundData/' + idPianetaCliccato +'/');
                                 refPianetaCliccato.update( {
                                     navs : resultNav ,
                                 });
@@ -227,7 +231,7 @@ ref.onAuth(function(authData) {
         				}
                         
     	    			// aggiorno i dati del pianeta di origine su db:
-    	    			var refIdPianetaOrigine = new Firebase('https://tgame.firebaseio.com/roundData/' + idPianetaOrigine +'/');
+    	    			var refIdPianetaOrigine = new Firebase('https://tgame.firebaseio.com/room1/roundData/' + idPianetaOrigine +'/');
     		    		refIdPianetaOrigine.update( {
     		    			navs : 1 ,
     		    		});
@@ -244,7 +248,7 @@ ref.onAuth(function(authData) {
 
                             activePlayerId = 2 ;
                             // aggiorno l'active player sul db
-                            var refActivePlayerId = new Firebase('https://tgame.firebaseio.com/');
+                            var refActivePlayerId = new Firebase('https://tgame.firebaseio.com/room1/');
                             refActivePlayerId.update( {
                              activePlayerId : 2,
                             });
@@ -289,7 +293,7 @@ ref.onAuth(function(authData) {
 
                             // uploado il mining
                              for ( indexForMining = 0; indexForMining < numberOfPlanetsToMine; ++indexForMining ) {
-                                var refMining = new Firebase('https://tgame.firebaseio.com/roundData/' + arrPlanetsToMine[indexForMining] +'/');
+                                var refMining = new Firebase('https://tgame.firebaseio.com/room1/roundData/' + arrPlanetsToMine[indexForMining] +'/');
                                 refMining.update( {
                                 navs : arrNumberToMine[indexForMining],
                                 });
@@ -300,9 +304,67 @@ ref.onAuth(function(authData) {
 
                         } else if ( currPlayerId == 2 ) {
                             
+                            activePlayerId = 3 ;
+                            // aggiorno l'active player sul db
+                            var refActivePlayerId = new Firebase('https://tgame.firebaseio.com/room1/');
+                            refActivePlayerId.update( {
+                             activePlayerId : 3,
+                            });
+                            console.log('ho aggiornato l active player a db');
+
+
+
+                            // conto i pianeti posseduti dal player successivo
+                            var numberToMine = 0;
+                            var thisPlanetKeyForMining;
+                            for ( indexMining = 0; indexMining < numberOfPlanets; ++indexMining) {
+
+                                thisPlanetKeyForMining = arrPlanetsRound[indexMining];
+                                var theOwner = allDataRound[thisPlanetKeyForMining].owner ;
+                                if ( allDataRound[thisPlanetKeyForMining].owner === pl3 ) {
+                                    numberToMine = numberToMine + 1 ;
+                                    console.log("numberToMine "+ thisPlanetKeyForMining + " : " + numberToMine);
+                                }
+                            }
+
+                            // rifaccio il loop dei pianeti del player e aggiorno le nav con il mining
+                            var thisPlanetKeyForMining2;
+                            var arrPlanetsToMine = []
+                            var arrNumberToMine = []
+                            for ( indexMining2 = 0; indexMining2 < numberOfPlanets; ++indexMining2) {
+
+                                thisPlanetKeyForMining2 = arrPlanetsRound[indexMining2];
+                                var theOwner = allDataRound[thisPlanetKeyForMining2].owner ;
+                                var preMiningNavs = allDataRound[thisPlanetKeyForMining2].navs;
+                                var minedNavs = preMiningNavs + numberToMine;
+                                if ( theOwner === pl3) {
+                                    arrPlanetsToMine.push(thisPlanetKeyForMining2); 
+                                    arrNumberToMine.push(minedNavs);
+                                }
+                            }
+                            console.log('fine loop per capire cosa minare');
+                            var numberOfPlanetsToMine = arrPlanetsToMine.length;
+
+                            console.log('numberOfPlanetsToMine' + numberOfPlanetsToMine);
+                            console.log('array dei pianeti da minare:' + arrPlanetsToMine);
+                            console.log('array dei numeri per il mining:' + arrNumberToMine);
+
+                            // uploado il mining
+                             for ( indexForMining = 0; indexForMining < numberOfPlanetsToMine; ++indexForMining ) {
+                                var refMining = new Firebase('https://tgame.firebaseio.com/room1/roundData/' + arrPlanetsToMine[indexForMining] +'/');
+                                refMining.update( {
+                                navs : arrNumberToMine[indexForMining],
+                                });
+                             }
+
+                        } 
+
+                        // PL3XXX
+                        else if ( currPlayerId == 3 ) {
+
                             activePlayerId = 1 ;
                             // aggiorno l'active player sul db
-                            var refActivePlayerId = new Firebase('https://tgame.firebaseio.com/');
+                            var refActivePlayerId = new Firebase('https://tgame.firebaseio.com/room1/');
                             refActivePlayerId.update( {
                              activePlayerId : 1,
                             });
@@ -347,88 +409,39 @@ ref.onAuth(function(authData) {
 
                             // uploado il mining
                              for ( indexForMining = 0; indexForMining < numberOfPlanetsToMine; ++indexForMining ) {
-                                var refMining = new Firebase('https://tgame.firebaseio.com/roundData/' + arrPlanetsToMine[indexForMining] +'/');
+                                var refMining = new Firebase('https://tgame.firebaseio.com/room1/roundData/' + arrPlanetsToMine[indexForMining] +'/');
                                 refMining.update( {
                                 navs : arrNumberToMine[indexForMining],
                                 });
                              }
 
 
-                        } 
-                        // PL3XXX
-                        // else if ( currPlayerId == 3 ) {
 
-                                // codice per il mining obsoleto!!!!!!!!!!!!!!
-                        //     activePlayerId = 1 ;
-                        //     // aggiorno l'active player sul db
-                        //     var refActivePlayerId = new Firebase('https://tgame.firebaseio.com/');
-                        //     refActivePlayerId.update( {
-                        //      activePlayerId : 1,
-                        //     });
+                        }
 
 
 
-                        //     // conto i pianeti posseduti dal player successivo
-                        //     var numberToMine = 0;
-                        //     var thisPlanetKeyForMining;
-                        //     for ( indexMining = 0; indexMining < numberOfPlanets; ++indexMining) {
 
-                        //         thisPlanetKeyForMining = arrPlanetsRound[indexMining];
-                        //         var theOwner = allDataRound[thisPlanetKeyForMining].owner ;
-                        //         if ( allDataRound[thisPlanetKeyForMining].owner === pl1 ) {
-                        //             numberToMine = numberToMine + 1 ;
-                        //             console.log("numberToMine "+ thisPlanetKeyForMining + " : " + numberToMine);
-                        //         }
-                        //     }
-
-                        //     // tolgo -1 al numberToMine se il player successivo ha appena perso un pianeta
-                        //     if ( currOwner == pl1 && numberToMine != 0 && controlloMining == true ) {
-                        //         numberToMine = numberToMine-1 ;
-                        //     }
-
-                        //     // rifaccio il loop dei pianeti del player e aggiorno le nav con il mining
-                        //     var thisPlanetKeyForMining2;
-                        //     var arrPlanetsToMine = []
-                        //     var arrNumberToMine = []
-                        //     for ( indexMining2 = 0; indexMining2 < numberOfPlanets; ++indexMining2) {
-
-                        //         thisPlanetKeyForMining2 = arrPlanetsRound[indexMining2];
-                        //         var theOwner = allDataRound[thisPlanetKeyForMining2].owner ;
-                        //         var preMiningNavs = allDataRound[thisPlanetKeyForMining2].navs;
-                        //         var minedNavs = preMiningNavs + numberToMine;
-                        //         if ( allDataRound[thisPlanetKeyForMining2].owner === pl1) {
-                        //             arrPlanetsToMine.push(thisPlanetKeyForMining2); 
-                        //             arrNumberToMine.push(minedNavs);
-                        //         }
-                        //     }
-                        //     console.log('fine secondo loop');
-                        //     var numberOfPlanetsToMine = arrPlanetsToMine.length;
-
-                        //     console.log('numberOfPlanetsToMine' + numberOfPlanetsToMine);
-                        //     console.log('array dei pianeti da minare:' + arrPlanetsToMine);
-                        //     console.log('array dei numeri per il mining:' + arrNumberToMine);
-
-                        //      for ( indexForMining = 0; indexForMining < numberOfPlanetsToMine; ++indexForMining ) {
-                        //         var refMining = new Firebase('https://tgame.firebaseio.com/roundData/' + arrPlanetsToMine[indexForMining] +'/');
-                        //         refMining.update( {
-                        //         navs : arrNumberToMine[indexForMining],
-                        //         });
-                        //      }
-
-
-
-                        // }
 
                         // faccio il reload per riazzerare le variabili e aggiornare lo stage
                         // location.reload();
+
+
+
                        
                     } else {
-                        alert('pianeta non attaccabile');
+                        $('#alert').html('pianeta non raggiungibile!');
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
                     }
 
 
     			} else {
-                    alert('scegli un pianeta diverso dal pianeta di origine')
+                    $('#alert').html('scegli un pianeta diverso dal pianeta di partenza');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
                 }
 
     		} //else {
@@ -465,37 +478,37 @@ ref.onAuth(function(authData) {
 
 
 
-// var tGame = new Firebase('https://tgame.firebaseio.com/');
+// var tGameRoom1Reset = new Firebase('https://tgame.firebaseio.com/room1/');
 
 
 // // SET DEL JSON DEL DATABSE:
 
-// tGame.set( { 
+// tGameRoom1Reset.set( { 
 // 	// dati della partita
 // 	gameData : {
-// 		numberOfPlayers : 2 ,
+// 		numberOfPlayers : 3 ,
 // 		players : {
 // 			pl1 : {
 // 				email : 'ruggero.motta@gmail.com',
 // 				name : 'rugge',
-// 				motherPlanet : 'p11',
+// 				motherPlanet : 'p1',
 // 				id : 1,
 // 				color : 'lightgreen',
 // 			},
 // 			pl2 : {
 // 				email : 'mario@mario.com',
 // 				name : 'den',
-// 				motherPlanet : 'p13',
+// 				motherPlanet : 'p11',
 // 				id : 2,
 // 				color : 'lightblue',
 // 			},
-// 			// pl3 : {
-// 			// 	email : 'gigi@gigi.com',
-// 			// 	name : 'gigi',
-// 			// 	motherPlanet : 'p15',
-// 			// 	id : 3,
-// 			// 	color : 'orange',
-// 			// }
+// 			pl3 : {
+// 				email : 'gigi@gigi.com',
+// 				name : 'gigi',
+// 				motherPlanet : 'p15',
+// 				id : 3,
+// 				color : 'orange',
+// 			}
 // 		},
 // 		numberOfPlanets : 15 ,
 // 		planetsOnStage : {
@@ -504,7 +517,7 @@ ref.onAuth(function(authData) {
 // 				initNav : '10',
 // 				level : '0',
 // 				connections : ['p2','p3'],
-// 				id : 1
+// 				pid : 1
 // 			},
 
 
@@ -513,14 +526,14 @@ ref.onAuth(function(authData) {
 // 				initNav : '2',
 // 				level : '0',
 // 				connections : ['p1','p3','p4','p5'],
-// 				id : 2
+// 				pid : 2
 // 			},
 // 			p3 : {
 // 				type : 'mother',
 // 				initNav : '3',
 // 				level : '0',
 // 				connections : ['p1','p2','p5','p6'],
-// 				id : 3
+// 				pid : 3
 // 			},
 
 
@@ -529,21 +542,21 @@ ref.onAuth(function(authData) {
 // 				initNav : '4',
 // 				level : '0',
 // 				connections : ['p2','p5','p7','p8'],
-// 				id : 4
+// 				pid : 4
 // 			},
 //             p5 : {
 //                 type :' normal',
 //                 initNav : '5',
 //                 level : '0',
 //                 connections : ['p2','p3','p4','p8','p9','p6'],
-//                 id : 5
+//                 pid : 5
 //             },
 //             p6 : {
 //                 type :' normal',
 //                 initNav : '6',
 //                 level : '0',
 //                 connections : ['p3','p5','p9','p10'],
-//                 id : 6
+//                 pid : 6
 //             },
 
 
@@ -552,28 +565,28 @@ ref.onAuth(function(authData) {
 //                 initNav : '7',
 //                 level : '0',
 //                 connections : ['p4','p8','p12','p11'],
-//                 id : 7
+//                 pid : 7
 //             },
 //             p8 : {
 //                 type :' normal',
 //                 initNav : '8',
 //                 level : '0',
 //                 connections : ['p4','p5','p9','p13','p12','p7'],
-//                 id : 8
+//                 pid : 8
 //             },
 //             p9 : {
 //                 type :' normal',
 //                 initNav : '9',
 //                 level : '0',
 //                 connections : ['p5','p6','p10','p14','p13','p8'],
-//                 id : 9
+//                 pid : 9
 //             },
 //             p10 : {
 //                 type :' normal',
 //                 initNav : '10',
 //                 level : '0',
 //                 connections : ['p6','p9','p14','p15'],
-//                 id : 10
+//                 pid : 10
 //             },
 
 
@@ -582,43 +595,43 @@ ref.onAuth(function(authData) {
 //                 initNav : '11',
 //                 level : '0',
 //                 connections : ['p7','p12',],
-//                 id : 40
+//                 pid : 40
 //             },
 //             p12 : {
 //                 type :' normal',
 //                 initNav : '12',
 //                 level : '0',
 //                 connections : ['p11','p7','p8','p13'],
-//                 id : 12
+//                 pid : 12
 //             },
 //             p13 : {
 //                 type :' normal',
 //                 initNav : '13',
 //                 level : '0',
 //                 connections : ['p12','p8','p9','p14'],
-//                 id : 40
+//                 pid : 40
 //             },
 //             p14 : {
 //                 type :' normal',
 //                 initNav : '14',
 //                 level : '0',
 //                 connections : ['p13','p9','p10','p15'],
-//                 id : 14
+//                 pid : 14
 //             },
 //             p15 : {
 //                 type :' normal',
 //                 initNav : '15',
 //                 level : '0',
 //                 connections : ['p14','p10'],
-//                 id : 40
+//                 pid : 40
 //             },
 // 		}
 // 	},
 // 	// dati del turno
 //     roundData : { 
 // 		p1 : {
-// 			navs : 20,
-// 			owner : 'neutro',
+// 			navs : 10,
+// 			owner : 'ruggero.motta@gmail.com',
 // 			navInArrivo : {
 // 				pl1 : 0,
 // 				pl2 : 0,
@@ -628,7 +641,7 @@ ref.onAuth(function(authData) {
 
 
 // 		p2 : {
-// 			navs : 15,
+// 			navs : 3,
 // 			owner : 'neutro',
 // 			navInArrivo : {
 // 				pl1 : 0,
@@ -637,7 +650,7 @@ ref.onAuth(function(authData) {
 // 			}
 // 		},
 // 		p3 : {
-// 			navs : 15,
+// 			navs : 3,
 // 			owner : 'neutro',
 // 			navInArrivo : {
 // 				pl1 : 0,
@@ -686,7 +699,7 @@ ref.onAuth(function(authData) {
 //             }
 //         },
 //         p8 : {
-//             navs : 4,
+//             navs : 7,
 //             owner : 'neutro',
 //             navInArrivo : {
 //                 pl1 : 0,
@@ -695,7 +708,7 @@ ref.onAuth(function(authData) {
 //             }
 //         },
 //         p9 : {
-//             navs : 4,
+//             navs : 7,
 //             owner : 'neutro',
 //             navInArrivo : {
 //                 pl1 : 0,
@@ -715,8 +728,8 @@ ref.onAuth(function(authData) {
 
 
 //         p11 : {
-//             navs : 8,
-//             owner : 'ruggero.motta@gmail.com',
+//             navs : 10,
+//             owner : 'mario@mario.com',
 //             navInArrivo : {
 //                 pl1 : 0,
 //                 pl2 : 0,
@@ -733,7 +746,7 @@ ref.onAuth(function(authData) {
 //             }
 //         },
 //         p13 : {
-//             navs : 4,
+//             navs : 5,
 //             owner : 'neutro',
 //             navInArrivo : {
 //                 pl1 : 0,
@@ -751,8 +764,8 @@ ref.onAuth(function(authData) {
 //             }
 //         },
 //         p15 : {
-//             navs : 8,
-//             owner : 'mario@mario.com',
+//             navs : 10,
+//             owner : 'gigi@gigi.com',
 //             navInArrivo : {
 //                 pl1 : 0,
 //                 pl2 : 0,
