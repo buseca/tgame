@@ -81,7 +81,7 @@ angular.module('tGameApp')
         templateUrl: 'views/chat.html',
         controller: 'ChatCtrl'
       })
-      .otherwise({redirectTo: '/'});
+      .otherwise({redirectTo: '/#/'});
   }])
 
   /**
