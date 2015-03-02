@@ -54,7 +54,6 @@ angular.module('tGameApp')
             
         } else {
           if (planet.owner != movingShipsOwner) {
-            
             if ((movingShips - planet.navs) > 0) {
               planet.owner = movingShipsOwner;
             } else if ((movingShips - planet.navs) == 0) {
