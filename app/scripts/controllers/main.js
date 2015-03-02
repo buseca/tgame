@@ -13,16 +13,27 @@ angular.module('tGameApp')
   	var ref = new Firebase("https://tgame.firebaseio.com/room1");
   	var sync = $firebase(ref);
   	// oggetto json con tutti i dati scricati al loading della pagina:
-	// /// oggetto json con dati dei players:
-	// console.log(allData.)
-	var list = sync.$asObject();
+  	// /// oggetto json con dati dei players:
+  	// console.log(allData.)
+  	var list = sync.$asObject();
 
-  //console.log(list.gameData.planetOnStage);
-  //console.log(list );
+    //console.log(list.gameData.planetOnStage);
+    //console.log(list );
 
-  list.$loaded().then(function() {
-    $scope.roundData = list.roundData;
-    console.log($scope.planetsOnStage);
-  });
+    list.$loaded().then(function() {
+      
+
+
+      _.forEach(list.roundData, function(planet, key) {
+        $scope[key] = planet;
+        console.log($scope[key]);
+
+        //console.log(_.find(list.gameData.players, { list.gameData.players.email: planet.email }));
+      });
+
+
+
+
+    });
 	  
   });
