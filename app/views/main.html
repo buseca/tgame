@@ -1,13 +1,12 @@
 <div class="universo">
     
-    <div id="p1" class="planet p1">1</div>
+    <!-- <div id="p1" class="planet p1">1</div>
     <br>
     <div id="p2" class="planet p2">2</div>
     <div id="p3" class="planet p3">3</div>
     <br>
     <div id="p4" class="planet p4">4</div>
 
-    <!-- let's test the game -->
     <div id="p5" class="planet p5">5</div>
     <div id="p6" class="planet p6">6</div>
     <br>
@@ -22,11 +21,13 @@
     <div id="p14" class="planet p14">14</div>
     <div id="p15" class="planet p15">15</div>
     <br>
-    <br>
+    <br> -->
+
+
+    <div ng-repeat="planet in roundData" id="p{{planet.pid}}"  class="planet" ng-class="'p' + planet.pid">{{planet.navs}}</div>
+
     <div class="player">Active player is {{ activePlayer }}</div>
-<ul>
-    <li ng-repeat="item in data">{{ item }}</li>
-</ul>
+
     <!-- END let's test the game -->
     
 </div>
