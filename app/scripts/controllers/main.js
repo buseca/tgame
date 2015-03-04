@@ -19,15 +19,14 @@ angular.module('tGameApp')
 
     //console.log(list.gameData.planetOnStage);
     //console.log(list );
-    $scope.players = [];
 
     list.$loaded().then(function() {
       
-      _.forEach(list.gameData.players, function(player, key) {
-        $scope.players.push(player);
-        // console.log(_.find(list.gameData.players, { list.gameData.players.email: planet.email }));
-      });
-
+      // _.forEach(list.gameData.players, function(player, key) {
+      //   $scope.players.push(player);
+      //   // console.log(_.find(list.gameData.players, { list.gameData.players.email: planet.email }));
+      // });
+      $scope.players = list.gameData.players;
 
       _.forEach(list.roundData, function(planet, key) {
         // console.log(_.find($scope.players, { $scope.players.email: planet.email }));
@@ -46,6 +45,7 @@ angular.module('tGameApp')
       });
       var movingShips = null,
           movingShipsOwner = null;
+      
       $scope.moveShipFromPlanet = function (planet) {
         if (movingShips == null) {
           movingShips = planet.navs;
@@ -56,6 +56,7 @@ angular.module('tGameApp')
           if (planet.owner != movingShipsOwner) {
             if ((movingShips - planet.navs) > 0) {
               planet.owner = movingShipsOwner;
+              planet.color = _.find($scope.players, {'email': planet.owner}).color;
             } else if ((movingShips - planet.navs) == 0) {
               planet.owner = "neutro";
             }
